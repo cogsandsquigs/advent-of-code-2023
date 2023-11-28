@@ -4,6 +4,8 @@
 	# All the crates
 	members = ["day-01"]
 
+	workspace.resolver = "2"
+
 	[workspace.package]
 		authors     = ["Ian Pratt <ianjdpratt@gmail.com>"]
 		description = "My code for the advent of code - all written in Rust!"

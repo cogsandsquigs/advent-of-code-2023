@@ -1,0 +1,11 @@
+[workspace]
+	exclude = ["advent-utils"]
+
+	# All the crates
+	members = []
+
+	[workspace.package]
+		authors     = ["Ian Pratt <ianjdpratt@gmail.com>"]
+		description = "My code for the advent of code - all written in Rust!"
+		edition     = "2021"
+		version     = "0.0.1"

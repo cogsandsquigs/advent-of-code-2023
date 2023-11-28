@@ -2,7 +2,7 @@
 	exclude = ["advent-utils"]
 
 	# All the crates
-	members = []
+	members = ["day-01"]
 
 	[workspace.package]
 		authors     = ["Ian Pratt <ianjdpratt@gmail.com>"]

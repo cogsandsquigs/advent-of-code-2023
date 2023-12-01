@@ -3,7 +3,7 @@ use regex::Regex;
 use std::collections::HashMap;
 
 fn main() {
-    part_1();
+    // part_1();
     part_2();
 }
 
@@ -38,17 +38,30 @@ fn part_2(input: &str) -> u32 {
     let mut sum = 0;
 
     for line in input.lines() {
-        let mut chunks: Vec<_> = line.split_inclusive(|c: char| c.is_numeric()).collect();
+        let mut str_digits = str_digits_regex.find_iter(line);
+        let first_str_digit = str_digits.next();
+        let last_str_digit = str_digits.last();
 
-        println!("{:?} ", chunks);
+        let mut char_digits = line.chars().enumerate().filter(|(_, c)| c.is_numeric());
+        let first_char_digit = char_digits.next();
+        let last_char_digit = char_digits.last();
 
-        if chunks.len() == 1 {
-            todo!()
-        } else if chunks.len() == 2 {
-            todo!()
-        } else {
-            todo!()
-        }
+        println!(
+            "{:?} {:?} {:?} {:?}",
+            first_str_digit, last_str_digit, first_char_digit, last_char_digit
+        );
+
+        let first_digit = match (first_str_digit, first_char_digit) {
+            (Some(x), Some(y)) => {
+                if x.start() > y.0 {
+                    str_digits_map[&x.as_str()]
+                } else {
+                    y.1.to_digit(10).unwrap()
+                }
+            }
+        };
+
+        // sum += first_digit * 10 + last_digit
     }
 
     sum

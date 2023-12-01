@@ -9,3 +9,4 @@
 
 [dependencies]
 	advent-utils = { path = "../advent-utils" }
+	regex        = "^1.10.1"

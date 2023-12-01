@@ -4,7 +4,7 @@
 	# All the crates
 	members = ["day-01"]
 
-	workspace.resolver = "2"
+	resolver = "2"
 
 	[workspace.package]
 		authors     = ["Ian Pratt <ianjdpratt@gmail.com>"]

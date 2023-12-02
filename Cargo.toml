@@ -2,7 +2,7 @@
 	exclude = ["advent-utils"]
 
 	# All the crates
-	members = ["day-01", "day-02"]
+	members = ["day-01", "day-02", "day-03"]
 
 	resolver = "2"
 

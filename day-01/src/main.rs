@@ -1,6 +1,4 @@
 use advent_utils::macros::solution;
-use regex::Regex;
-use std::collections::HashMap;
 
 fn main() {
     // part_1();
@@ -21,48 +19,35 @@ fn part_1(input: &str) -> u32 {
         .sum()
 }
 
-const STR_DIGITS: [&str; 9] = [
-    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+const STR_DIGITS: [(&str, &str); 9] = [
+    ("one", "o1e"),
+    ("two", "t2o"),
+    ("three", "t3e"),
+    ("four", "f4r"),
+    ("five", "f5e"),
+    ("six", "s6x"),
+    ("seven", "s7n"),
+    ("eight", "e8t"),
+    ("nine", "n9e"),
 ];
 
 #[solution(day = "01", part = "2")]
 fn part_2(input: &str) -> u32 {
-    let str_digits_map = STR_DIGITS
-        .iter()
-        .enumerate()
-        .map(|(i, s)| (s, (i + 1) as u32))
-        .collect::<HashMap<_, _>>();
+    let mut new_input: String = input.into();
 
-    let str_digits_regex = Regex::new(r"(one|two|three|four|five|six|seven|eight|nine)").unwrap();
-
-    let mut sum = 0;
-
-    for line in input.lines() {
-        let mut str_digits = str_digits_regex.find_iter(line);
-        let first_str_digit = str_digits.next();
-        let last_str_digit = str_digits.last();
-
-        let mut char_digits = line.chars().enumerate().filter(|(_, c)| c.is_numeric());
-        let first_char_digit = char_digits.next();
-        let last_char_digit = char_digits.last();
-
-        println!(
-            "{:?} {:?} {:?} {:?}",
-            first_str_digit, last_str_digit, first_char_digit, last_char_digit
-        );
-
-        let first_digit = match (first_str_digit, first_char_digit) {
-            (Some(x), Some(y)) => {
-                if x.start() > y.0 {
-                    str_digits_map[&x.as_str()]
-                } else {
-                    y.1.to_digit(10).unwrap()
-                }
-            }
-        };
-
-        // sum += first_digit * 10 + last_digit
+    // pre-process input to remove all non-numeric string digits + replace with actual digits
+    for (from, to) in STR_DIGITS {
+        new_input = new_input.replace(from, to);
     }
 
-    sum
+    new_input
+        .lines()
+        .map(|line| {
+            let iter = line.chars().filter(|c| c.is_numeric());
+            let first_char = iter.clone().next().unwrap();
+            let last_char = iter.last().unwrap();
+
+            10 * first_char.to_digit(10).unwrap() + last_char.to_digit(10).unwrap()
+        })
+        .sum()
 }

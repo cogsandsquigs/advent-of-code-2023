@@ -1,7 +1,7 @@
 use advent_utils::macros::solution;
 
 fn main() {
-    // part_1();
+    part_1();
     part_2();
 }
 

@@ -73,7 +73,7 @@ fn is_possible(game: &Game, constraints: (u32, u32, u32)) -> bool {
     true
 }
 
-#[solution(day = "02", part = "1")]
+#[solution(day = 2, part = 1)]
 fn part_1(input: &str) -> u32 {
     let games: Vec<Game> = to_games(input);
 
@@ -105,7 +105,7 @@ fn fewest_cubes(game: &Game) -> (u32, u32, u32) {
     min
 }
 
-#[solution(day = "02", part = "2")]
+#[solution(day = 2, part = 2)]
 fn part_2(input: &str) -> u32 {
     let games: Vec<Game> = to_games(input);
 

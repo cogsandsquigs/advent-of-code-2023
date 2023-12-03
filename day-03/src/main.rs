@@ -51,7 +51,7 @@ fn get_nums_and_symbol_edges(
     (nums, symbol_edges)
 }
 
-#[solution(day = "03", part = "1")]
+#[solution(day = 3, part = 1)]
 fn part_1(input: &str) -> u32 {
     let (nums, symbol_edges) = get_nums_and_symbol_edges(input);
 
@@ -75,7 +75,7 @@ fn get_gears(input: &str) -> Vec<Point<usize>> {
     gears
 }
 
-#[solution(day = "03", part = "2")]
+#[solution(day = 3, part = 2)]
 fn part_2(input: &str) -> u32 {
     let (nums, _) = get_nums_and_symbol_edges(input);
     let gears = get_gears(input);

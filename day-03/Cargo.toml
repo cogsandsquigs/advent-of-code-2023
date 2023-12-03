@@ -9,3 +9,6 @@
 
 [dependencies]
 	advent-utils = { path = "../advent-utils" }
+	itertools    = "^0.12.0"
+	lazy_static  = "^1.4.0"
+	regex        = "^1.4.2"

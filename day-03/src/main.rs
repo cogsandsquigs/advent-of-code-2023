@@ -10,6 +10,7 @@ fn is_symbol(c: char) -> bool {
     !c.is_alphanumeric() && c != '.'
 }
 
+#[allow(clippy::type_complexity)]
 fn get_nums_and_symbol_edges(
     input: &str,
 ) -> (Vec<(u32, Vec<Point<usize>>)>, HashSet<Point<usize>>) {

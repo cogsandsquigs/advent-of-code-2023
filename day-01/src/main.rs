@@ -5,7 +5,7 @@ fn main() {
     part_2();
 }
 
-#[solution(day = 1, part = 1)]
+#[solution(part = 1)]
 fn part_1(input: &str) -> u32 {
     input
         .lines()
@@ -31,7 +31,7 @@ const STR_DIGITS: [(&str, &str); 9] = [
     ("nine", "n9e"),
 ];
 
-#[solution(day = 1, part = 2)]
+#[solution(part = 2)]
 fn part_2(input: &str) -> u32 {
     let mut new_input: String = input.into();
 

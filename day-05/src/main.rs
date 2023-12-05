@@ -1,6 +1,5 @@
 use advent_utils::macros::solution;
 use itertools::Itertools;
-use rayon::prelude::*;
 
 fn main() {
     part_1();
@@ -10,7 +9,6 @@ fn main() {
 #[derive(Debug)]
 struct MapSegment {
     dst_start: i64,
-    dst_end: i64,
     src_start: i64,
     src_end: i64,
 }
@@ -19,7 +17,6 @@ impl MapSegment {
     fn new_from_input(dst_start: i64, src_start: i64, length: i64) -> Self {
         Self {
             dst_start,
-            dst_end: dst_start + length - 1,
             src_start,
             src_end: src_start + length - 1,
         }

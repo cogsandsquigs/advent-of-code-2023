@@ -2,11 +2,10 @@
 	authors.workspace     = true
 	description.workspace = true
 	edition               = "2021"
-	name                  = "day-05"
+	name                  = "day-06"
 	version.workspace     = true
 
 	# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 	advent-utils = { path = "../advent-utils" }
-	itertools    = "^0.12.0"

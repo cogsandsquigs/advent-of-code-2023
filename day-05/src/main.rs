@@ -94,52 +94,38 @@ fn part_1(input: &str) -> i64 {
     min_location
 }
 
-struct SeedRange {
-    // Start, end
-    // Not necessarily ordered.
-    ranges: Vec<(i64, i64)>,
-}
+// struct SeedRange {
+//     // Start, end
+//     // Not necessarily ordered.
+//     ranges: Vec<(i64, i64)>,
+// }
 
-impl Mapping {
-    /// Map a seed range to a destination range, accounting for segments becoming disjoint
-    fn map_seed_range(&self, src: SeedRange) -> SeedRange {
-        let mut ranges = Vec::new();
+// impl Mapping {
+//     /// Map a seed range to a destination range, accounting for segments becoming disjoint
+//     fn map_seed_range(&self, src: SeedRange) -> SeedRange {
+//         let mut old_ranges = src.ranges.clone();
+//         let mut new_ranges = vec![];
 
-        for range in src.ranges {
-            for segment in &self.segments {
-                // Skip if range is less than the start
-                if range.1 < segment.src_start {
-                    continue;
-                }
+//         while let Some((start, end)) = old_ranges.pop() {
+//             for segment in &self.segments {
+//                 // Skip the segment if it doesn't overlap with the range
+//                 if (segment.src_start >= start && segment.src_start >= end)
+//                     || (segment.src_start + segment.length <= start
+//                         && segment.src_start + segment.length <= end)
+//                 {
+//                     continue;
+//                 }
 
-                // Skip if range is greater than the end
-                if range.0 > segment.src_start + segment.length {
-                    continue;
-                }
+//                 // If the segment is contained in the range, map the range and return
+//                 let new_range = segment.map_range(start, end);
+//             }
 
-                // If the range is wholly contained in the segment, map it
-                if range.0 >= segment.src_start && range.1 <= segment.src_start + segment.length {
-                    ranges.push((segment.map(range.0), segment.map(range.1)));
-                    continue;
-                }
+//             new_ranges.push((self.map(start), self.map(end)));
+//         }
 
-                // If the range is outside and inside a segment, split into 3 ranges:
-                // one before the segment, one in it, and one after it
-                if range.0 < segment.src_start && range.1 > segment.src_start + segment.length {
-                    ranges.push((range.0, segment.src_start - 1));
-                    ranges.push((segment.dst_start, segment.dst_start + segment.length - 1));
-                    ranges.push((segment.src_start + segment.length, range.1));
-
-                    continue;
-                }
-
-                todo!()
-            }
-        }
-
-        SeedRange { ranges }
-    }
-}
+//         SeedRange { ranges: new_ranges }
+//     }
+// }
 
 #[solution(part = 2)]
 fn part_2(input: &str) -> i64 {
@@ -147,19 +133,17 @@ fn part_2(input: &str) -> i64 {
     let seeds = seeds
         .iter()
         .tuples()
-        .map(|(a, b)| SeedRange {
-            ranges: vec![(*a, a + b - 1)],
-        })
+        .flat_map(|(a, b)| *a..(a + b))
         .collect_vec();
     let mut min_location = i64::MAX;
 
     for mut seed in seeds {
         for mapping in &mappings {
-            let mapped = mapping.map_seed_range(seed);
+            let mapped = mapping.map(seed);
             seed = mapped;
         }
 
-        min_location = min_location.min(seed.ranges[0].0);
+        min_location = min_location.min(seed);
     }
 
     min_location

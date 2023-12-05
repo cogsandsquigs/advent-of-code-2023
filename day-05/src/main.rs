@@ -1,5 +1,6 @@
 use advent_utils::macros::solution;
 use itertools::Itertools;
+use rayon::prelude::*;
 
 fn main() {
     part_1();
@@ -94,57 +95,26 @@ fn part_1(input: &str) -> i64 {
     min_location
 }
 
-// struct SeedRange {
-//     // Start, end
-//     // Not necessarily ordered.
-//     ranges: Vec<(i64, i64)>,
-// }
-
-// impl Mapping {
-//     /// Map a seed range to a destination range, accounting for segments becoming disjoint
-//     fn map_seed_range(&self, src: SeedRange) -> SeedRange {
-//         let mut old_ranges = src.ranges.clone();
-//         let mut new_ranges = vec![];
-
-//         while let Some((start, end)) = old_ranges.pop() {
-//             for segment in &self.segments {
-//                 // Skip the segment if it doesn't overlap with the range
-//                 if (segment.src_start >= start && segment.src_start >= end)
-//                     || (segment.src_start + segment.length <= start
-//                         && segment.src_start + segment.length <= end)
-//                 {
-//                     continue;
-//                 }
-
-//                 // If the segment is contained in the range, map the range and return
-//                 let new_range = segment.map_range(start, end);
-//             }
-
-//             new_ranges.push((self.map(start), self.map(end)));
-//         }
-
-//         SeedRange { ranges: new_ranges }
-//     }
-// }
-
 #[solution(part = 2)]
 fn part_2(input: &str) -> i64 {
     let (seeds, mappings) = parse_input(input);
     let seeds = seeds
         .iter()
         .tuples()
-        .flat_map(|(a, b)| *a..(a + b))
+        .flat_map(|(a, b)| *a..(a + b - 1))
         .collect_vec();
-    let mut min_location = i64::MAX;
 
-    for mut seed in seeds {
-        for mapping in &mappings {
-            let mapped = mapping.map(seed);
-            seed = mapped;
-        }
+    seeds
+        .par_iter()
+        .map(|seed| {
+            let mut seed = *seed;
+            for mapping in &mappings {
+                let mapped = mapping.map(seed);
+                seed = mapped;
+            }
 
-        min_location = min_location.min(seed);
-    }
-
-    min_location
+            seed
+        })
+        .min()
+        .unwrap()
 }

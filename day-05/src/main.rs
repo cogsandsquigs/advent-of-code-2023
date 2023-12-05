@@ -121,7 +121,7 @@ impl Mapping {
             // If the seed range starts outside a segment but ends inside/after one
             else if seed_range.0 < splitter.src_start {
                 // If it's not in the splitter, continue
-                if seed_range.1 <= splitter.src_start {
+                if seed_range.1 < splitter.src_start {
                     continue;
                 }
                 // If the seed ends inside the splitter, we just make the 2 new seed ranges and return

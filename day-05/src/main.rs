@@ -126,11 +126,8 @@ impl Mapping {
                 }
                 // If the seed ends inside the splitter, we just make the 2 new seed ranges and return
                 else if seed_range.1 <= splitter.src_end {
-                    new_ranges.push((
-                        splitter.map(seed_range.0),
-                        splitter.map(splitter.src_start - 1),
-                    ));
-                    new_ranges.push((splitter.src_start, seed_range.1));
+                    new_ranges.push((seed_range.0, splitter.src_start - 1));
+                    new_ranges.push((splitter.map(splitter.src_start), splitter.map(seed_range.1)));
                     continue;
                 }
                 // Otherwise, we split into 3 segments: the before, the inside, and the after (which we loop on again)
@@ -139,7 +136,11 @@ impl Mapping {
                         splitter.map(seed_range.0),
                         splitter.map(splitter.src_start - 1),
                     ));
-                    new_ranges.push((splitter.src_start, splitter.src_end));
+                    new_ranges.push((seed_range.0, splitter.src_start - 1));
+                    new_ranges.push((
+                        splitter.map(splitter.src_start),
+                        splitter.map(splitter.src_end),
+                    ));
                     seed_range = (splitter.src_end + 1, seed_range.1);
                 }
             }

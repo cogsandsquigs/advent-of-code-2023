@@ -158,8 +158,6 @@ fn part_2(input: &str) -> i64 {
         .map(|(a, b)| (*a, (a + b)))
         .collect_vec();
 
-    println!("{:?}", seed_ranges);
-
     for mapping in &mappings {
         let mut new_seeds = vec![];
 
@@ -169,8 +167,6 @@ fn part_2(input: &str) -> i64 {
 
         seed_ranges = new_seeds.iter().unique().copied().collect_vec();
     }
-
-    println!("{:?}", seed_ranges);
 
     seed_ranges.iter().sorted_by_key(|x| x.0).next().unwrap().0
 }

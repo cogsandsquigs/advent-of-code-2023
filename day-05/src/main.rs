@@ -1,5 +1,6 @@
 use advent_utils::macros::solution;
 use itertools::Itertools;
+use std::cmp;
 
 fn main() {
     part_1();
@@ -105,46 +106,31 @@ impl Mapping {
         let mut new_ranges: Vec<(i64, i64)> = vec![];
 
         for splitter in &self.segments {
-            // If the seed range starts inside a segment
-            if seed_range.0 >= splitter.src_start {
-                // If the seed range is wholly inside the splitter, then we just append to the ranges and return.
-                if seed_range.1 <= splitter.src_end {
-                    new_ranges.push((splitter.map(seed_range.0), splitter.map(seed_range.1)));
-                    continue;
-                }
-                // Otherwise, we split into 2 segments: one we push (the one before, in the range), and one we loop on again
-                else {
-                    new_ranges.push((splitter.map(seed_range.0), splitter.map(splitter.src_end)));
-                    seed_range = (splitter.src_end + 1, seed_range.1);
-                }
+            // Skip if the seed range is entirely before or after the splitter
+            if seed_range.1 < splitter.src_start || seed_range.0 > splitter.src_end {
+                continue;
             }
-            // If the seed range starts outside a segment but ends inside/after one
-            else if seed_range.0 < splitter.src_start {
-                // If it's not in the splitter, continue
-                if seed_range.1 < splitter.src_start {
-                    continue;
-                }
-                // If the seed ends inside the splitter, we just make the 2 new seed ranges and return
-                else if seed_range.1 <= splitter.src_end {
-                    new_ranges.push((seed_range.0, splitter.src_start - 1));
-                    new_ranges.push((splitter.map(splitter.src_start), splitter.map(seed_range.1)));
-                    continue;
-                }
-                // Otherwise, we split into 3 segments: the before, the inside, and the after (which we loop on again)
-                else {
-                    new_ranges.push((
-                        splitter.map(seed_range.0),
-                        splitter.map(splitter.src_start - 1),
-                    ));
-                    new_ranges.push((seed_range.0, splitter.src_start - 1));
-                    new_ranges.push((
-                        splitter.map(splitter.src_start),
-                        splitter.map(splitter.src_end),
-                    ));
-                    seed_range = (splitter.src_end + 1, seed_range.1);
-                }
+
+            // Push the range inside the splitter
+            new_ranges.push((
+                splitter.map(cmp::max(splitter.src_start, seed_range.0)),
+                splitter.map(cmp::min(splitter.src_end, seed_range.1)),
+            ));
+
+            // If the seed range starts before the splitter, we need to push the range before the splitter
+            if seed_range.0 < splitter.src_start {
+                new_ranges.push((seed_range.0, splitter.src_start - 1));
+            }
+
+            // If the seed range ends after the splitter, we need to set the seed to the range after the splitter
+            if seed_range.1 > splitter.src_end {
+                seed_range = (cmp::max(splitter.src_end + 1, seed_range.0), seed_range.1);
+            } else {
+                return new_ranges;
             }
         }
+
+        new_ranges.push(seed_range);
 
         new_ranges
     }

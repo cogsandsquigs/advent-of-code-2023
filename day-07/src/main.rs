@@ -279,8 +279,7 @@ impl HandKind {
                 }
                 3 => has_three = true,
                 4 => has_four = true,
-                5 => has_five = true,
-                x if x > &5 => has_five = true,
+                x if x >= &5 => has_five = true,
                 _ => (),
             }
         }

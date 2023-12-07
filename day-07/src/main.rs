@@ -1,5 +1,5 @@
 use advent_utils::macros::solution;
-use std::{cmp::Ordering, os::macos::raw};
+use std::cmp::Ordering;
 
 fn main() {
     part_1();
@@ -21,12 +21,6 @@ enum CardDay1 {
     Queen, // 12
     King,  // 13
     Ace,   // 14
-}
-
-impl Into<usize> for CardDay1 {
-    fn into(self) -> usize {
-        self as usize
-    }
 }
 
 impl TryFrom<char> for CardDay1 {

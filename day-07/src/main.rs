@@ -231,30 +231,26 @@ fn parse_hands_day2(input: &str) -> Vec<Hand<CardDay2>> {
 impl HandKind {
     /// Returns the kind of hand given a list of cardDay1s.
     fn get_kind_day2(cards: &[CardDay2]) -> Self {
-        let mut raw_counts: [i32; 15] = [0; 15];
+        let mut counts = [0; 15];
         for card in cards {
-            raw_counts[*card as usize] += 1;
+            counts[*card as usize] += 1;
         }
 
-        let joker_count = raw_counts[CardDay2::Joker as usize];
-        let mut max_score = HandKind::get_raw_kind_day2(raw_counts);
+        let hand_type = Self::get_raw_kind_day2(counts);
+        let joker_count: i32 = counts[CardDay2::Joker as usize];
 
-        if joker_count == 0 {
-            return max_score;
+        match hand_type {
+            HandKind::FiveOfAKind => HandKind::FiveOfAKind,
+            HandKind::FourOfAKind if joker_count >= 1 => HandKind::FiveOfAKind,
+            HandKind::FullHouse if joker_count >= 2 => HandKind::FiveOfAKind,
+            HandKind::FullHouse if joker_count >= 2 => HandKind::FourOfAKind,
+            HandKind::ThreeOfAKind if joker_count > 0 => HandKind::FourOfAKind,
+            HandKind::TwoPair if joker_count == 1 => HandKind::FullHouse,
+            HandKind::TwoPair if joker_count == 2 => HandKind::FourOfAKind,
+            HandKind::OnePair if joker_count > 0 => HandKind::ThreeOfAKind,
+            HandKind::HighCard if joker_count > 0 => HandKind::OnePair,
+            _ => hand_type,
         }
-
-        for i in 0..15 {
-            if raw_counts[i] == 0 || i == CardDay2::Joker as usize {
-                continue;
-            }
-
-            let original_count = raw_counts[i];
-            raw_counts[i] = (raw_counts[i] + joker_count).min(5); // Ensure the count doesn't exceed 5
-            max_score = max_score.max(HandKind::get_raw_kind_day2(raw_counts));
-            raw_counts[i] = original_count; // Restore the original count
-        }
-
-        max_score
     }
 
     fn get_raw_kind_day2(counts: [i32; 15]) -> Self {
@@ -262,7 +258,7 @@ impl HandKind {
         let mut has_three = false;
         let mut has_four = false;
         let mut has_five = false;
-        let mut has_2_pair = false;
+        let mut has_2_pair: bool = false;
         for count in counts.iter() {
             match count {
                 2 => {

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use advent_utils::macros::solution;
 
 fn main() {
-    part_1();
+    // part_1();
     part_2();
 }
 
@@ -51,28 +51,56 @@ fn part_1(input: &str) -> usize {
 fn part_2(input: &str) -> usize {
     let (map, instructions) = parse_input(input);
 
-    let mut current_nodes = map
+    let current_nodes = map
         .keys()
         .filter(|k| k.ends_with('A'))
         .copied()
         .collect::<Vec<_>>();
-    let mut steps = 0;
 
-    while !current_nodes.iter().all(|n| n.ends_with('Z')) {
-        for i in 0..current_nodes.len() {
-            let node = current_nodes[i];
+    // (steps before cycle, steps in cycle (start of cycle to ends with z))
+    let mut node_paths = vec![];
+    // let mut node_steps_before_cycle = vec![];
+    // let mut node_steps_in_cycle = vec![];
 
+    for mut node in current_nodes.iter() {
+        let mut node_path = vec![*node];
+        let mut steps = 0;
+
+        while !node.ends_with('Z') {
             let (left, right) = map.get(node).unwrap();
 
             if instructions[steps % instructions.len()] == 'L' {
-                current_nodes[i] = left;
+                node = left;
             } else {
-                current_nodes[i] = right;
+                node = right;
             }
+
+            steps += 1;
+            node_path.push(*node);
         }
 
-        steps += 1;
+        let (last_left, last_right) = map.get(node).unwrap();
+        let cycle_start = if instructions[steps % instructions.len()] == 'L' {
+            last_left
+        } else {
+            last_right
+        };
+
+        let cycle_steps = node_path
+            .iter()
+            .rev()
+            .position(|n| n == cycle_start)
+            .unwrap();
+
+        node_paths.push((steps - cycle_steps, cycle_steps));
+        // node_steps_before_cycle.push(steps - cycle_steps);
+        // node_steps_in_cycle.push(cycle_steps);
     }
 
-    steps
+    // for (x, y) in node_paths.iter() {
+    //     print!("x = {} mod {}, ", x, y);
+    // }
+    // println!();
+
+    todo!()
 }

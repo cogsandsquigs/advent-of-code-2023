@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-
 use advent_utils::macros::solution;
+use num::Integer;
+use std::collections::HashMap;
 
 fn main() {
     // part_1();
@@ -12,7 +12,7 @@ fn parse_input(input: &str) -> (HashMap<&str, (&str, &str)>, Vec<char>) {
     let mut lines = input.lines();
     let instructions = lines.next().unwrap().chars().collect::<Vec<_>>();
 
-    lines.next();
+    lines.next(); // Skip next (blank) line
 
     for line in lines {
         let node = &line[0..3];
@@ -51,56 +51,27 @@ fn part_1(input: &str) -> usize {
 fn part_2(input: &str) -> usize {
     let (map, instructions) = parse_input(input);
 
-    let current_nodes = map
+    let mut current_nodes = map
         .keys()
-        .filter(|k| k.ends_with('A'))
-        .copied()
+        .filter(|&&node| node.ends_with('A'))
         .collect::<Vec<_>>();
+    let mut node_steps = vec![0; current_nodes.len()];
 
-    // (steps before cycle, steps in cycle (start of cycle to ends with z))
-    let mut node_paths = vec![];
-    // let mut node_steps_before_cycle = vec![];
-    // let mut node_steps_in_cycle = vec![];
-
-    for mut node in current_nodes.iter() {
-        let mut node_path = vec![*node];
-        let mut steps = 0;
+    for i in 0..current_nodes.len() {
+        let mut node = current_nodes[i];
 
         while !node.ends_with('Z') {
             let (left, right) = map.get(node).unwrap();
 
-            if instructions[steps % instructions.len()] == 'L' {
+            if instructions[node_steps[i] % instructions.len()] == 'L' {
                 node = left;
             } else {
                 node = right;
             }
 
-            steps += 1;
-            node_path.push(*node);
+            node_steps[i] += 1;
         }
-
-        let (last_left, last_right) = map.get(node).unwrap();
-        let cycle_start = if instructions[steps % instructions.len()] == 'L' {
-            last_left
-        } else {
-            last_right
-        };
-
-        let cycle_steps = node_path
-            .iter()
-            .rev()
-            .position(|n| n == cycle_start)
-            .unwrap();
-
-        node_paths.push((steps - cycle_steps, cycle_steps));
-        // node_steps_before_cycle.push(steps - cycle_steps);
-        // node_steps_in_cycle.push(cycle_steps);
     }
 
-    // for (x, y) in node_paths.iter() {
-    //     print!("x = {} mod {}, ", x, y);
-    // }
-    // println!();
-
-    todo!()
+    node_steps.iter().copied().reduce(|a, b| a.lcm(&b)).unwrap()
 }

@@ -3,7 +3,7 @@ use num::Integer;
 use std::collections::HashMap;
 
 fn main() {
-    // part_1();
+    part_1();
     part_2();
 }
 
@@ -51,7 +51,7 @@ fn part_1(input: &str) -> usize {
 fn part_2(input: &str) -> usize {
     let (map, instructions) = parse_input(input);
 
-    let mut current_nodes = map
+    let current_nodes = map
         .keys()
         .filter(|&&node| node.ends_with('A'))
         .collect::<Vec<_>>();

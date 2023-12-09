@@ -1,3 +1,3 @@
-# advent-of-code-rust-template
+# advent-of-code
 
-A rust template for Advent of Code
+My code for the advent of code - all written in Rust!

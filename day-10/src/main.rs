@@ -130,36 +130,32 @@ fn part_2(input: &str) -> u64 {
 
     for (y, line) in input.lines().enumerate() {
         let mut parity = false; // False is even/outside loop, true is odd/inside loop
+        let mut boundary_start_char = ' ';
 
-        for (x_previous, (_, c, _)) in line.chars().tuple_windows().enumerate() {
-            let previous = Point::new(x_previous, y);
-            let current = Point::new(x_previous + 1, y);
-            let next = Point::new(x_previous + 2, y);
+        for (x_previous, (c, c_next)) in line.chars().tuple_windows().enumerate() {
+            let current = Point::new(x_previous, y);
 
-            if !loop_points.contains(&previous)
-                && loop_points.contains(&current)
-                && !loop_points.contains(&next)
-                || loop_points.contains(&previous)
-                    && loop_points.contains(&current)
-                    && !loop_points.contains(&next)
-                || !loop_points.contains(&previous)
-                    && loop_points.contains(&current)
-                    && loop_points.contains(&next)
-            {
-                parity = !parity;
+            if loop_points.contains(&current) {
+                if c == '|'
+                    || c == 'F' && c_next == 'J'
+                    || c == 'S' && c_next == 'J'
+                    || c == 'L' && c_next == '7'
+                    || c == 'J' && boundary_start_char == 'F'
+                    || c == '7' && boundary_start_char == 'L'
+                {
+                    boundary_start_char = ' ';
+                    parity = !parity;
+                } else if c == 'F' && (c_next == '-' || c_next == 'S') {
+                    boundary_start_char = 'F';
+                } else if c == 'L' && (c_next == '-' || c_next == 'S') {
+                    boundary_start_char = 'L';
+                }
             }
 
             if parity && !loop_points.contains(&current) {
                 area += 1;
-                print!("#");
-            } else if loop_points.contains(&current) {
-                print!("*");
-            } else {
-                print!("{}", c);
             }
         }
-
-        println!();
     }
 
     area

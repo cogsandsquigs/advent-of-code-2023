@@ -1,5 +1,6 @@
 use advent_utils::{grid::Grid, macros::solution, point::Point};
 use itertools::Itertools;
+use regex::Regex;
 use std::collections::HashSet;
 
 fn main() {
@@ -96,7 +97,7 @@ fn part_1(input: &str) -> u64 {
 }
 
 #[solution(part = 2)]
-fn part_2(input: &str) -> u64 {
+fn part_2(input: &str) -> usize {
     let grid = Grid::from_str(input);
     let start = grid.clone().into_iter().find(|(_, c)| *c == 'S').unwrap().0;
 
@@ -127,33 +128,20 @@ fn part_2(input: &str) -> u64 {
     }
 
     let mut area = 0;
+    let boundary_regex = Regex::new(r"(\|)|((F|S)(-|S)*(J|S)|(L|S)(-|S)*(7|S))").unwrap();
 
     for (y, line) in input.lines().enumerate() {
-        let mut parity = false; // False is even/outside loop, true is odd/inside loop
-        let mut boundary_start_char = ' ';
+        let mut parity = 0;
+        let mut previous_non_loop_char = 0;
+        let matches = boundary_regex
+            .find_iter(line)
+            .filter(|m| loop_points.contains(&Point::new(m.start(), y)));
 
-        for (x_previous, (c, c_next)) in line.chars().tuple_windows().enumerate() {
-            let current = Point::new(x_previous, y);
-
-            if loop_points.contains(&current) {
-                if c == '|'
-                    || c == 'F' && c_next == 'J'
-                    || c == 'S' && c_next == 'J'
-                    || c == 'L' && c_next == '7'
-                    || c == 'J' && boundary_start_char == 'F'
-                    || c == '7' && boundary_start_char == 'L'
-                {
-                    boundary_start_char = ' ';
-                    parity = !parity;
-                } else if c == 'F' && (c_next == '-' || c_next == 'S') {
-                    boundary_start_char = 'F';
-                } else if c == 'L' && (c_next == '-' || c_next == 'S') {
-                    boundary_start_char = 'L';
+        for (m1, m2) in matches.tuples() {
+            for x in m1.end()..m2.start() {
+                if !loop_points.contains(&Point::new(x, y)) {
+                    area += 1;
                 }
-            }
-
-            if parity && !loop_points.contains(&current) {
-                area += 1;
             }
         }
     }

@@ -50,7 +50,7 @@ fn part_1(input: &str) -> u64 {
         ways_sum += ways;
     }
 
-    todo!()
+    ways_sum
 }
 
 #[solution(part = 2)]

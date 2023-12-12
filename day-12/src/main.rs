@@ -5,34 +5,30 @@ fn main() {
     part_2();
 }
 
-fn split_into_chunks(input: &str) -> Vec<&str> {
-    input.split('.').filter(|s| !s.is_empty()).collect()
-}
+fn parse_input(input: &str) -> impl Iterator<Item = (Vec<&str>, Vec<u64>)> + '_ {
+    input.lines().map(|line| {
+        let mut iter = line.split_whitespace();
 
-fn parse_input(input: &str) -> Vec<(Vec<&str>, Vec<u64>)> {
-    input
-        .lines()
-        .map(|line| {
-            let mut iter = line.split_whitespace();
-
-            (
-                split_into_chunks(iter.next().unwrap()),
-                iter.next()
-                    .unwrap()
-                    .split(',')
-                    .map(|s| s.parse().unwrap())
-                    .collect(),
-            )
-        })
-        .collect()
+        (
+            iter.next()
+                .unwrap()
+                .split('.')
+                .filter(|s| !s.is_empty())
+                .collect(),
+            iter.next()
+                .unwrap()
+                .split(',')
+                .map(|s| s.parse().unwrap())
+                .collect(),
+        )
+    })
 }
 
 #[solution(part = 1)]
 fn part_1(input: &str) -> u64 {
     let mut ways_sum = 0;
-    let parsed = parse_input(input);
 
-    for (chunks, sizes) in parsed {
+    for (chunks, sizes) in parse_input(input) {
         let mut ways = 0;
 
         println!("{:?}; {:?}", chunks, sizes);

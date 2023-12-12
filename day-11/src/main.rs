@@ -42,29 +42,7 @@ fn get_expanded_rows_cols(
     )
 }
 
-#[solution(part = 1)]
-fn part_1(input: &str) -> usize {
-    let grid = Grid::from_str(input);
-    let galaxies = get_galaxies(&grid);
-    let (expanded_rows, expanded_cols) = get_expanded_rows_cols(&grid, &galaxies);
-
-    galaxies
-        .iter()
-        .map(|p| {
-            let mut p = *p;
-
-            p.x += expanded_cols.iter().filter(|c| **c < p.x).count();
-            p.y += expanded_rows.iter().filter(|r| **r < p.y).count();
-
-            p
-        })
-        .tuple_combinations()
-        .fold(0, |acc, (a, b)| acc + a.manhattan_distance(&b))
-}
-
-#[solution(part = 2)]
-fn part_2(input: &str) -> usize {
-    let expansion_factor = 1000000;
+fn expand(input: &str, expansion_factor: usize) -> usize {
     let grid = Grid::from_str(input);
     let galaxies = get_galaxies(&grid);
     let (expanded_rows, expanded_cols) = get_expanded_rows_cols(&grid, &galaxies);
@@ -81,4 +59,14 @@ fn part_2(input: &str) -> usize {
         })
         .tuple_combinations()
         .fold(0, |acc, (a, b)| acc + a.manhattan_distance(&b))
+}
+
+#[solution(part = 1)]
+fn part_1(input: &str) -> usize {
+    expand(input, 2)
+}
+
+#[solution(part = 2)]
+fn part_2(input: &str) -> usize {
+    expand(input, 1000000)
 }

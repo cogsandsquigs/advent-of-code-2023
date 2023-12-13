@@ -1,16 +1,90 @@
-use advent_utils::macros::solution;
+use std::cmp;
+
+use advent_utils::{grid::Grid, macros::solution};
 
 fn main() {
     part_1();
     part_2();
 }
 
+fn parse_input(input: &str) -> Vec<Grid<char>> {
+    input.split("\n\n").map(Grid::from_str).collect()
+}
+
+fn check_row_symmetry(grid: &Grid<char>, row_idx_before_symmetric_split: usize) -> bool {
+    for i in 0..cmp::min(
+        row_idx_before_symmetric_split + 1,
+        grid.height - row_idx_before_symmetric_split - 1,
+    ) {
+        let row_before = grid.get_row(row_idx_before_symmetric_split - i);
+        let row_after = grid.get_row(row_idx_before_symmetric_split + i + 1);
+
+        if row_before != row_after {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn check_col_symmetry(grid: &Grid<char>, col_idx_before_symmetric_split: usize) -> bool {
+    for i in 0..cmp::min(
+        col_idx_before_symmetric_split + 1,
+        grid.width - col_idx_before_symmetric_split - 1,
+    ) {
+        let col_before = grid.get_col(col_idx_before_symmetric_split - i);
+        let col_after = grid.get_col(col_idx_before_symmetric_split + i + 1);
+
+        if col_before != col_after {
+            return false;
+        }
+    }
+
+    true
+}
+
+fn get_summary(grid: &Grid<char>) -> usize {
+    let mut summary = 0;
+
+    for col_idx in 0..grid.width - 1 {
+        if check_col_symmetry(grid, col_idx) {
+            summary += col_idx + 1;
+        }
+    }
+
+    for row_idx in 0..grid.height - 1 {
+        if check_row_symmetry(grid, row_idx) {
+            summary += (row_idx + 1) * 100;
+        }
+    }
+
+    summary
+}
+
 #[solution(part = 1)]
-fn part_1(input: &str) -> u64 {
-    0
+fn part_1(input: &str) -> usize {
+    parse_input(input).iter().map(get_summary).sum()
 }
 
 #[solution(part = 2)]
-fn part_2(input: &str) -> u64 {
-    0
+fn part_2(input: &str) -> usize {
+    let mut summary_sum = 0;
+
+    for grid in parse_input(input) {
+        for (point, val) in (&grid).into_iter() {
+            let new_val = if *val == '#' { '.' } else { '#' };
+
+            let mut new_grid = grid.clone();
+            new_grid[point] = new_val;
+
+            let summary = get_summary(&new_grid);
+
+            if summary != 0 {
+                summary_sum += summary;
+                break;
+            }
+        }
+    }
+
+    summary_sum
 }

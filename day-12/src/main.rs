@@ -1,4 +1,5 @@
 use advent_utils::macros::solution;
+use rayon::prelude::*;
 
 fn main() {
     part_1();
@@ -108,13 +109,7 @@ fn get_all_ways(
 
 #[solution(part = 1)]
 fn part_1(input: &str) -> u128 {
-    let mut ways_sum = 0;
-
-    for springs in parse_input_day1(input) {
-        ways_sum += get_all_ways(springs);
-    }
-
-    ways_sum
+    parse_input_day1(input).par_bridge().map(get_all_ways).sum()
 }
 
 fn parse_input_day2(input: &str) -> impl Iterator<Item = Springs> + '_ {
@@ -155,11 +150,5 @@ fn parse_input_day2(input: &str) -> impl Iterator<Item = Springs> + '_ {
 
 #[solution(part = 2)]
 fn part_2(input: &str) -> u128 {
-    let mut ways_sum = 0;
-
-    for springs in parse_input_day2(input) {
-        ways_sum += get_all_ways(springs);
-    }
-
-    ways_sum
+    parse_input_day2(input).par_bridge().map(get_all_ways).sum()
 }

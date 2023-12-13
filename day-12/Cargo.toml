@@ -9,3 +9,4 @@
 
 [dependencies]
 	advent-utils = { path = "../advent-utils" }
+	rayon        = "^1.8.0"

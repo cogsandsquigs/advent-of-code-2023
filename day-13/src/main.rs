@@ -43,16 +43,26 @@ fn check_col_symmetry(grid: &Grid<char>, col_idx_before_symmetric_split: usize) 
     true
 }
 
-fn get_summary(grid: &Grid<char>) -> usize {
+fn get_summary(grid: &Grid<char>, skip_row: Option<usize>, skip_col: Option<usize>) -> usize {
     let mut summary = 0;
 
     for col_idx in 0..grid.width - 1 {
+        if skip_col.map(|i| i == col_idx).unwrap_or(false) {
+            continue;
+        }
+
         if check_col_symmetry(grid, col_idx) {
             summary += col_idx + 1;
         }
     }
 
     for row_idx in 0..grid.height - 1 {
+        if skip_row.map(|i| i == row_idx).unwrap_or(false) {
+            continue;
+        }
+
+        println!("row_idx: {}", row_idx);
+
         if check_row_symmetry(grid, row_idx) {
             summary += (row_idx + 1) * 100;
         }
@@ -63,7 +73,32 @@ fn get_summary(grid: &Grid<char>) -> usize {
 
 #[solution(part = 1)]
 fn part_1(input: &str) -> usize {
-    parse_input(input).iter().map(get_summary).sum()
+    parse_input(input)
+        .iter()
+        .map(|g| get_summary(g, None, None))
+        .sum()
+}
+
+/// row, col
+fn get_summary_row_col(grid: &Grid<char>) -> (usize, usize) {
+    let mut row = 0;
+    let mut col = 0;
+
+    for col_idx in 0..grid.width - 1 {
+        if check_col_symmetry(grid, col_idx) {
+            col = col_idx;
+            break;
+        }
+    }
+
+    for row_idx in 0..grid.height - 1 {
+        if check_row_symmetry(grid, row_idx) {
+            row = row_idx;
+            break;
+        }
+    }
+
+    (row, col)
 }
 
 #[solution(part = 2)]
@@ -71,13 +106,21 @@ fn part_2(input: &str) -> usize {
     let mut summary_sum = 0;
 
     for grid in parse_input(input) {
+        let (orig_row, orig_col) = get_summary_row_col(&grid);
+
         for (point, val) in (&grid).into_iter() {
             let new_val = if *val == '#' { '.' } else { '#' };
+
+            // println!("{}", point);
 
             let mut new_grid = grid.clone();
             new_grid[point] = new_val;
 
-            let summary = get_summary(&new_grid);
+            let summary = get_summary(&new_grid, Some(orig_row), Some(orig_col));
+
+            if point == (4, 1).into() {
+                println!("{}{}", new_grid, summary);
+            }
 
             if summary != 0 {
                 summary_sum += summary;

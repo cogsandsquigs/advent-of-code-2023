@@ -115,8 +115,8 @@ fn part_1(input: &str) -> u128 {
 fn parse_input_day2(input: &str) -> impl Iterator<Item = Springs> + '_ {
     input.lines().map(|line| {
         let mut iter = line.split_whitespace();
-        let spring_str = (iter.next().unwrap().to_string() + "?").repeat(5);
-        let size_str = (iter.next().unwrap().to_string() + ",").repeat(5);
+        let spring_str = [iter.next().unwrap()].repeat(5).join("?");
+        let size_str = [iter.next().unwrap()].repeat(5).join(",");
 
         let mut springs = 0;
         let mut open = 0;

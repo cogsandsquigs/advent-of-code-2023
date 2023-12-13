@@ -59,7 +59,7 @@ fn test_possible_layout(springs: u128, sizes: &[u128]) -> bool {
     let mut current_run = 0;
 
     // Rough estimate of the number of bits we need to check.
-    for i in 0..64 {
+    for i in 0..128 {
         if springs & (1 << i) != 0 {
             current_run += 1;
         } else if current_run != 0 {

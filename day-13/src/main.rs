@@ -61,8 +61,6 @@ fn get_summary(grid: &Grid<char>, skip_row: Option<usize>, skip_col: Option<usiz
             continue;
         }
 
-        println!("row_idx: {}", row_idx);
-
         if check_row_symmetry(grid, row_idx) {
             summary += (row_idx + 1) * 100;
         }
@@ -80,20 +78,20 @@ fn part_1(input: &str) -> usize {
 }
 
 /// row, col
-fn get_summary_row_col(grid: &Grid<char>) -> (usize, usize) {
-    let mut row = 0;
-    let mut col = 0;
+fn get_summary_row_col(grid: &Grid<char>) -> (Option<usize>, Option<usize>) {
+    let mut row = None;
+    let mut col = None;
 
     for col_idx in 0..grid.width - 1 {
         if check_col_symmetry(grid, col_idx) {
-            col = col_idx;
+            col = Some(col_idx);
             break;
         }
     }
 
     for row_idx in 0..grid.height - 1 {
         if check_row_symmetry(grid, row_idx) {
-            row = row_idx;
+            row = Some(row_idx);
             break;
         }
     }
@@ -116,11 +114,7 @@ fn part_2(input: &str) -> usize {
             let mut new_grid = grid.clone();
             new_grid[point] = new_val;
 
-            let summary = get_summary(&new_grid, Some(orig_row), Some(orig_col));
-
-            if point == (4, 1).into() {
-                println!("{}{}", new_grid, summary);
-            }
+            let summary = get_summary(&new_grid, orig_row, orig_col);
 
             if summary != 0 {
                 summary_sum += summary;
